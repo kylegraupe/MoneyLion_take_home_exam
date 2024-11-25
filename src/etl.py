@@ -12,6 +12,7 @@ import sqlite3
 import pandas as pd
 
 DATABASE_PATH = "transactions_data.db"
+pd.set_option('display.max_columns', None)
 
 
 def execute_custom_query(query):
@@ -60,6 +61,7 @@ def calculate_total_transaction_amount_per_user():
     result = execute_custom_query(query)
     print(f'\nTotal Transaction Amount Per User:')
     print(result)
+    print(result.info())
     return result
 
 def identify_top_ten_users_by_transaction_volume():
@@ -116,9 +118,95 @@ def aggregate_daily_transactions():
     print(result)
     return result
 
+def alter_users_table_for_transaction_summary():
+    """
+    Alter the users table to add the columns needed for transaction summary data if they don't already exist.
+    """
+    conn = sqlite3.connect(DATABASE_PATH)
+    cursor = conn.cursor()
+
+    # Check if the columns already exist
+    cursor.execute("PRAGMA table_info(users);")
+    existing_columns = [column[1] for column in cursor.fetchall()]
+
+    # Add the columns only if they do not already exist
+    if 'total_transaction_amount' not in existing_columns:
+        cursor.execute("""
+            ALTER TABLE users
+            ADD COLUMN total_transaction_amount REAL DEFAULT 0;
+        """)
+        print("Added column total_transaction_amount.")
+
+    if 'total_deposit' not in existing_columns:
+        cursor.execute("""
+            ALTER TABLE users
+            ADD COLUMN total_deposit REAL DEFAULT 0;
+        """)
+        print("Added column total_deposit.")
+
+    if 'total_withdrawal' not in existing_columns:
+        cursor.execute("""
+            ALTER TABLE users
+            ADD COLUMN total_withdrawal REAL DEFAULT 0;
+        """)
+        print("Added column total_withdrawal.")
+
+    if 'total_purchase' not in existing_columns:
+        cursor.execute("""
+            ALTER TABLE users
+            ADD COLUMN total_purchase REAL DEFAULT 0;
+        """)
+        print("Added column total_purchase.")
+
+    conn.commit()
+    conn.close()
+    print("Users table updated successfully with transaction summary columns.")
+
+def upsert_transaction_summary_to_users():
+    """
+    This function updates the user table with the calculated transaction summary
+    without overwriting existing user data (signup_date, country).
+    """
+    # First, get the transaction summary data
+    transaction_summary = calculate_total_transaction_amount_per_user()
+
+    # Open a connection to the database
+    conn = sqlite3.connect(DATABASE_PATH)
+    cursor = conn.cursor()
+
+    # Iterate through the transaction summary rows and update each user in the users table
+    for ix, row in transaction_summary.iterrows():
+        user_id = row['user_id']
+        total_transaction_amount = row['total_transaction_amount']
+        total_deposit = row['total_deposit']
+        total_withdrawal = row['total_withdrawal']
+        total_purchase = row['total_purchase']
+
+        # The query will update only the transaction summary columns
+        query = """
+        UPDATE users 
+        SET 
+            total_transaction_amount = ?,
+            total_deposit = ?,
+            total_withdrawal = ?,
+            total_purchase = ?
+        WHERE user_id = ?;
+        """
+
+        # Execute the update query
+        cursor.execute(query, (total_transaction_amount, total_deposit, total_withdrawal, total_purchase, user_id))
+
+    # Commit changes and close the connection
+    conn.commit()
+    conn.close()
+    print("User transaction summary successfully updated without affecting existing user data.")
+
+
 def etl_executive():
     calculate_total_transaction_amount_per_user()
     identify_top_ten_users_by_transaction_volume()
     aggregate_daily_transactions()
+    alter_users_table_for_transaction_summary()
+    upsert_transaction_summary_to_users()
 
 

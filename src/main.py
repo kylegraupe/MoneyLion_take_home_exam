@@ -4,6 +4,7 @@ Execution endpoint.
 
 import sqlite3
 import pandas as pd
+
 import import_raw_to_db
 import etl
 
@@ -34,5 +35,5 @@ if __name__ == "__main__":
     import_raw_to_db.data_import_executive()
     etl.etl_executive()
 
-    query = "select * from users"
-    print(execute_custom_query(query))
+    # query = "select * from users"
+    # print(execute_custom_query(query))

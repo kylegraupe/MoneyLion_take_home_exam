@@ -48,7 +48,6 @@ def create_db_schemas(db_path):
     conn.close()
     print("Database schema created successfully.")  #TODO: CHANGE TO LOGGING
 
-
 def load_users_to_db(db_path, csv_path):
     """
     Loads data from the users CSV into the database,
@@ -72,7 +71,6 @@ def load_users_to_db(db_path, csv_path):
     conn.commit()
     conn.close()
     print("Users data ingested successfully.")  # TODO: CHANGE TO LOGGING
-
 
 def load_transactions_to_db(db_path, csv_path):
     """
@@ -103,7 +101,6 @@ def load_transactions_to_db(db_path, csv_path):
     conn.close()
     print("Transactions data ingested successfully.")  # TODO: CHANGE TO LOGGING
 
-
 def execute_custom_query(query):
     """
     Executes a custom SQL query on the 'users' table and returns the result.
@@ -122,6 +119,36 @@ def execute_custom_query(query):
         raise ValueError(f"An error occurred while executing the query: {e}")
 
 
+def delete_table(db_path, table_name):
+    """
+    Deletes a table from the SQLite database.
+
+    :param db_path: Path to the SQLite database file
+    :param table_name: Name of the table to be deleted
+    """
+    try:
+        # Connect to the SQLite database
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+
+        # Create the SQL query to drop the table
+        query = f"DROP TABLE IF EXISTS {table_name};"
+
+        # Execute the query
+        cursor.execute(query)
+
+        # Commit the changes
+        conn.commit()
+
+        # Close the connection
+        conn.close()
+
+        print(f"Table '{table_name}' has been deleted successfully.")
+
+    except sqlite3.Error as e:
+        print(f"An error occurred while deleting the table: {e}")
+
+
 def data_import_executive():
     """
 
@@ -132,8 +159,10 @@ def data_import_executive():
     load_users_to_db(DATABASE_PATH, USERS_PATH)
     load_transactions_to_db(DATABASE_PATH, TRANSACTIONS_PATH)
 
-    # user_test_query = "SELECT country, COUNT(*) as user_count FROM users GROUP BY country;"
+    # delete_table(DATABASE_PATH, "users")
+
+    user_test_query = "SELECT * from users"
     # transaction_test_query = "SELECT * FROM transactions WHERE transaction_type = 'deposit';"
-    #
-    # print(execute_custom_query(user_test_query))
+
+    print(execute_custom_query(user_test_query))
     # print(execute_custom_query(transaction_test_query))
