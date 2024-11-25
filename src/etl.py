@@ -40,7 +40,10 @@ def calculate_total_transaction_amount_per_user():
     query = """
     SELECT 
         u.user_id, 
-        SUM(t.amount) AS total_transaction_amount
+        SUM(t.amount) AS total_transaction_amount,
+        SUM(CASE WHEN t.transaction_type = 'deposit' THEN t.amount ELSE 0 END) AS total_deposit,
+        SUM(CASE WHEN t.transaction_type = 'withdrawal' THEN t.amount ELSE 0 END) AS total_withdrawal,
+        SUM(CASE WHEN t.transaction_type = 'purchase' THEN t.amount ELSE 0 END) AS total_purchase
     FROM 
         users u
     JOIN 
@@ -114,7 +117,6 @@ def aggregate_daily_transactions():
     return result
 
 def etl_executive():
-
     calculate_total_transaction_amount_per_user()
     identify_top_ten_users_by_transaction_volume()
     aggregate_daily_transactions()
