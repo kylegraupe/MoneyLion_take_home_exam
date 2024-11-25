@@ -1,3 +1,10 @@
+"""
+TASK 1: Data Ingestion and Database Design
+1. Design a relational database schema to store the data efficiently (Use OpenSource libraries
+like SQLite).
+2. Implement a script to ingest the data from the CSV files into your database.
+"""
+
 import sqlite3
 import pandas as pd
 
@@ -125,8 +132,8 @@ def data_import_executive():
     load_users_to_db(DATABASE_PATH, USERS_PATH)
     load_transactions_to_db(DATABASE_PATH, TRANSACTIONS_PATH)
 
-    user_test_query = "SELECT country, COUNT(*) as user_count FROM users GROUP BY country;"
-    transaction_test_query = "SELECT * FROM transactions WHERE transaction_type = 'deposit';"
-
-    print(execute_custom_query(user_test_query))
-    print(execute_custom_query(transaction_test_query))
+    # user_test_query = "SELECT country, COUNT(*) as user_count FROM users GROUP BY country;"
+    # transaction_test_query = "SELECT * FROM transactions WHERE transaction_type = 'deposit';"
+    #
+    # print(execute_custom_query(user_test_query))
+    # print(execute_custom_query(transaction_test_query))
