@@ -7,6 +7,7 @@ import pandas as pd
 
 import import_raw_to_db
 import etl
+import flask_api
 
 
 DATABASE_PATH = "transactions_data.db"
@@ -32,8 +33,9 @@ def execute_custom_query(query):
 
 if __name__ == "__main__":
 
-    import_raw_to_db.data_import_executive()
-    etl.etl_executive()
+    # import_raw_to_db.data_import_executive()
+    # etl.etl_executive()
+    flask_api.app.run(debug=True)
 
     # query = "select * from users"
     # print(execute_custom_query(query))
