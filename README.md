@@ -1,4 +1,3 @@
-<!-- Interactive Typing Name Animation (GIF or external service like Lottie can be used) -->
 <h1 align="left">
   <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=50&duration=2000&pause=10000&color=0FFFD0&center=false&vCenter=true&width=1000&lines=MoneyLion Take Home Exam" alt="Typing SVG" />
 </h1>Machine Learning Platform Engineer Take Home Exam using:
