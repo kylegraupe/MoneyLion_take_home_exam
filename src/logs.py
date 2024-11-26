@@ -27,3 +27,7 @@ def log_error(error_message):
 def log_critical(critical_message):
     """Log a critical event."""
     logger.critical(critical_message)
+
+def log_warning(warning_message):
+    """Log a warning."""
+    logger.warning(warning_message)

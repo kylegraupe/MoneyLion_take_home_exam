@@ -2,7 +2,11 @@
 TASK 1: Data Ingestion and Database Design
 1. Design a relational database schema to store the data efficiently (Use OpenSource libraries
 like SQLite).
+    a. Design Schema for User Table
+    b. Design Schema for Transaction Table
 2. Implement a script to ingest the data from the CSV files into your database.
+    a. Ingest Users CSV file into database.
+    b. Ingest Transactions CSV file into database.
 """
 
 import sqlite3
@@ -136,9 +140,9 @@ def load_transactions_to_db(db_path, csv_path):
 
 def execute_custom_query(query):
     """
-    Executes a custom SQL query on the 'users' table and returns the result.
+    Executes a custom SQL query and returns the result. Used as a utility function for manual testing.
 
-    :param query: The SQL query string to execute (must involve the 'users' table).
+    :param query: The SQL query string to execute.
     :return: Pandas DataFrame containing the query result.
     """
     conn = sqlite3.connect(DATABASE_PATH)
