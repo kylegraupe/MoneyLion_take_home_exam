@@ -6,7 +6,7 @@ Develop a RESTful API to expose the processed data.
 2. Get Top Users: get_top_users()
     - Copy into browser to test: http://127.0.0.1:5000/api/top_users
 3. Get Daily Transactions: get_daily_transactions()
-    - Copy into browser to test: http://127.0.0.1:5000/api/daily_transactions
+    - Copy into browser to test: http://127.0.0.1:5000/api/daily_transactions?date=2022-01-09
 
 Rather than pass the data from the ETL step to the API via a Pandas DataFrame, the API queries the data directly from
 the database. This is a better practice as it pulls from the ground truth and avoids RAM saturation.
@@ -110,14 +110,22 @@ def get_top_users():
     logs.log_event(f'Top Users by Transaction Volume Found and Delivered to Flask Server.')
     return jsonify([dict(row) for row in result])
 
-# 3. Get Daily Transaction Totals by Transaction Type
 @app.route('/api/daily_transactions', methods=['GET'])
 def get_daily_transactions():
     """
-    Handles the `/api/daily_transactions` endpoint to retrieve the daily transaction information.
+    Handles the `/api/daily_transactions` endpoint to retrieve the daily transaction information
+    for a specified date.
 
     :return: JSON response containing the daily transaction data or an error message.
     """
+    # Extract the `date` query parameter from the request
+    transaction_date = request.args.get('date')
+
+    if not transaction_date:
+        logs.log_error(f'Bad API Call: Missing date parameter. Status error: 400')
+        return jsonify({'error': 'Missing required query parameter: date'}), 400
+
+    # SQL query to fetch daily transactions for the specified date
     query = """
     SELECT 
         t.transaction_date, 
@@ -125,18 +133,20 @@ def get_daily_transactions():
         SUM(t.amount) AS daily_total
     FROM 
         transactions t
+    WHERE 
+        t.transaction_date = ?
     GROUP BY 
         t.transaction_date, t.transaction_type
     ORDER BY 
-        t.transaction_date ASC, t.transaction_type
+        t.transaction_type
     """
-    result = utility_library.query_db_for_api(query)
+    result = utility_library.query_db_for_api(query, (transaction_date,))
 
     if not result:
-        logs.log_error(f'Bad API Call: Daily Transactions Not Found. Status error: 404')
-        return jsonify({'error': 'No transactions found'}), 404
+        logs.log_error(f'Bad API Call: No transactions found for {transaction_date}. Status error: 404')
+        return jsonify({'error': f'No transactions found for date: {transaction_date}'}), 404
 
-    logs.log_event(f'Daily Transactions Found and Delivered to Flask Server.')
+    logs.log_event(f'Daily Transactions for {transaction_date} Found and Delivered to Flask Server.')
     return jsonify([dict(row) for row in result])
 
 @app.route("/api/health", methods=["GET"])
