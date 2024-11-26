@@ -1,5 +1,12 @@
-# MoneyLion_take_home_exam
-Machine Learning Platform Engineer Take Home Exam
+# MoneyLion Take Home Exam
+Machine Learning Platform Engineer Take Home Exam using:
+
+![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+![psutil](https://img.shields.io/badge/psutil-%23007ACC?style=for-the-badge&logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
+
+
 
 ## Features and Tasks
 
