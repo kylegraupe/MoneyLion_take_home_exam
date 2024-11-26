@@ -2,19 +2,19 @@
 Task 3: API Development
 Develop a RESTful API to expose the processed data.
 1. Get User Transaction Summary: get_user_transaction_summary()
-    - Copy into browser to test: http://127.0.0.1:5000/api/user_transaction_summary?user_id=101
+    - Copy into browser to test: http://your_ip_address:5000/api/user_transaction_summary?user_id=101
 2. Get Top Users: get_top_users()
-    - Copy into browser to test: http://127.0.0.1:5000/api/top_users
+    - Copy into browser to test: http://your_ip_address:5000/api/top_users
 3. Get Daily Transactions: get_daily_transactions()
-    - Copy into browser to test: http://127.0.0.1:5000/api/daily_transactions?date=2022-01-09
+    - Copy into browser to test: http://your_ip_address:5000/api/daily_transactions?date=2022-01-09
 
 Rather than pass the data from the ETL step to the API via a Pandas DataFrame, the API queries the data directly from
 the database. This is a better practice as it pulls from the ground truth and avoids RAM saturation.
 
 Task 4a: Monitoring
 1. Monitor application performance and health
-    - Copy into browser to test: http://127.0.0.1:5000/api/health
-    - Copy into browser to test: http://127.0.0.1:5000/api/log_monitor
+    - Copy into browser to test: http://your_ip_address:5000/api/health
+    - Copy into browser to test: http://your_ip_address:5000/api/log_monitor
 """
 
 from flask import Flask, jsonify, request
