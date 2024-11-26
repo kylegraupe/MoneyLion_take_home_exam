@@ -8,6 +8,9 @@ Develop a RESTful API to expose the processed data.
 3. Get Daily Transactions: get_daily_transactions()
     - Copy into browser to test: http://127.0.0.1:5000/api/daily_transactions
 
+Rather than pass the data from the ETL step to the API via a Pandas DataFrame, the API queries the data directly from
+the database. This is a better practice as it pulls from the ground truth and avoids RAM saturation.
+
 Task 4a: Monitoring
 1. Monitor application performance and health
     - Copy into browser to test: http://127.0.0.1:5000/api/health
@@ -21,27 +24,11 @@ import psutil
 import logs
 import monitoring
 import settings
+import utility_library
 
 app = Flask(__name__)
 
-# Database path
 DATABASE_PATH = settings.DB_PATH
-
-
-def query_db(query, params=()):
-    """
-    Function used to query SQLite Database
-    :param query:
-    :param params:
-    :return:
-    """
-    conn = sqlite3.connect(DATABASE_PATH)
-    conn.row_factory = sqlite3.Row  # To access columns by name
-    cur = conn.cursor()
-    cur.execute(query, params)
-    result = cur.fetchall()
-    conn.close()
-    return result
 
 
 # 1. Get User Transaction Summary
@@ -76,7 +63,7 @@ def get_user_transaction_summary():
     GROUP BY 
         u.user_id, u.country
     """
-    result = query_db(query, (user_id,))
+    result = utility_library.query_db_for_api(query, (user_id,))
 
     if not result:
         logs.log_error(f'Bad API Call: User ID is not found. Error Status: 404')
@@ -111,7 +98,7 @@ def get_top_users():
         transaction_count DESC
     LIMIT 10
     """
-    result = query_db(query)
+    result = utility_library.query_db_for_api(query)
 
     if not result:
         logs.log_error(f'Bad API Call: Top Users by Transaction Volume Not Found. Status error: 404')
@@ -119,7 +106,6 @@ def get_top_users():
 
     logs.log_event(f'Top Users by Transaction Volume Found and Delivered to Flask Server.')
     return jsonify([dict(row) for row in result])
-
 
 # 3. Get Daily Transaction Totals by Transaction Type
 @app.route('/api/daily_transactions', methods=['GET'])
@@ -140,7 +126,7 @@ def get_daily_transactions():
     ORDER BY 
         t.transaction_date ASC, t.transaction_type
     """
-    result = query_db(query)
+    result = utility_library.query_db_for_api(query)
 
     if not result:
         logs.log_error(f'Bad API Call: Daily Transactions Not Found. Status error: 404')
@@ -156,7 +142,6 @@ def health_check():
     Returns system performance metrics like CPU, memory, and uptime.
     """
     health_status = {
-        "status": "healthy",
         "cpu_usage_%": psutil.cpu_percent(interval=1),
         "num_cores": psutil.cpu_count(),
         "memory_usage_%": psutil.virtual_memory().percent,
@@ -170,8 +155,8 @@ def health_check():
 @app.route("/api/log_monitor", methods=["GET"])
 def log_monitoring():
     """
-    Log Monitoring check endpoint to monitor application status.
-    Returns the number of INFO, WARNING, and ERROR logs in the current log file.
+    Log Monitoring endpoint to monitor application status via logs.
+    Returns the number of INFO, WARNING, ERROR, and CRITICAL logs in the current log file.
     """
     counts = monitoring.count_log_levels(f'logs/{logs.LOG_FILE}')
 

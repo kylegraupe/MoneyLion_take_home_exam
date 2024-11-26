@@ -139,26 +139,10 @@ def load_transactions_to_db(db_path, csv_path):
     except Exception as e:
         logs.log_error(f'Transaction data could not be ingested into SQLite Database. Error: {e}')
 
-def execute_custom_query(query):
-    """
-    Executes a custom SQL query and returns the result. Used as a utility function for manual testing.
-
-    :param query: The SQL query string to execute.
-    :return: Pandas DataFrame containing the query result.
-    """
-    conn = sqlite3.connect(DATABASE_PATH)
-    try:
-        # Execute the query and fetch the results
-        result = pd.read_sql_query(query, conn)
-        conn.close()
-        return result
-    except Exception as e:
-        conn.close()
-        raise ValueError(f"An error occurred while executing the query: {e}")
 
 def delete_table(db_path, table_name):
     """
-    Deletes a table from the SQLite database.
+    Deletes a table from the SQLite database. Utility function for manual testing.
 
     :param db_path: Path to the SQLite database file
     :param table_name: Name of the table to be deleted
@@ -168,21 +152,14 @@ def delete_table(db_path, table_name):
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
 
-        # Create the SQL query to drop the table
         query = f"DROP TABLE IF EXISTS {table_name};"
 
-        # Execute the query
         cursor.execute(query)
-
-        # Commit the changes
         conn.commit()
-
-        # Close the connection
         conn.close()
 
         print(f"Table '{table_name}' has been deleted successfully.")
         logs.log_event(f"Table '{table_name}' has been deleted successfully.")
-
 
     except sqlite3.Error as e:
         print(f"An error occurred while deleting the table: {e}")
@@ -190,11 +167,14 @@ def delete_table(db_path, table_name):
 
 def data_import_executive():
     """
-
+    This function executes the steps to create the database schema and import the raw data from the CSV files.
     :return:
     """
-    # delete_table(DATABASE_PATH, "users")
-    # delete_table(DATABASE_PATH, "transactions")
+
+    if settings.DELETE_USER_TABLE:
+        delete_table(DATABASE_PATH, "users")
+    if settings.DELETE_TRANSACTION_TABLE:
+        delete_table(DATABASE_PATH, "transactions")
 
     create_db_schemas(DATABASE_PATH)
     load_users_to_db(DATABASE_PATH, USERS_PATH)

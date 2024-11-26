@@ -13,27 +13,11 @@ import pandas as pd
 
 import logs
 import settings
+import utility_library
 
 DATABASE_PATH = settings.DB_PATH
 pd.set_option('display.max_columns', None)
 
-
-def execute_custom_query(query):
-    """
-    Executes a custom SQL query on the desired table and returns the result as a Pandas DataFrame.
-
-    :param query: The SQL query string to execute.
-    :return: Pandas DataFrame containing the query result.
-    """
-    conn = sqlite3.connect(DATABASE_PATH)
-    try:
-        # Execute the query and fetch the results
-        result = pd.read_sql_query(query, conn)
-        conn.close()
-        return result
-    except Exception as e:
-        conn.close()
-        raise ValueError(f"An error occurred while executing the query: {e}")
 
 def calculate_total_transaction_amount_per_user(log_events=True):
     """
@@ -62,9 +46,11 @@ def calculate_total_transaction_amount_per_user(log_events=True):
     """
     # NOTE: LEFT JOIN IS USED TO INCLUDE ALL USERS EVEN IF THEY HAVE NO TRANSACTIONS
 
-    result = execute_custom_query(query)
-    print(f'\nTotal Transaction Amount Per User:')
-    print(result)
+    result = utility_library.execute_custom_query(query)
+    if settings.DISPLAY_ETL_PROCESSES_TO_CONSOLE:
+        print(f'\nTotal Transaction Amount Per User:')
+        print(result)
+
     if log_events:
         logs.log_event(f'Task 2-2-1 Completed. Total Transaction Amount Per User Calculated.')
         # Since this function is used multiple times, we do not want redundant logging when called in the application.
@@ -97,9 +83,11 @@ def identify_top_ten_users_by_transaction_volume():
     """
     # NOTE: LEFT JOIN IS USED TO INCLUDE ALL USERS EVEN IF THEY HAVE NO TRANSACTIONS
 
-    result = execute_custom_query(query)
-    print(f'\nTop Ten Users by Transaction Volume: ')
-    print(result)
+    result = utility_library.execute_custom_query(query)
+    if settings.DISPLAY_ETL_PROCESSES_TO_CONSOLE:
+        print(f'\nTop Ten Users by Transaction Volume: ')
+        print(result)
+
     logs.log_event(f'Task 2-2-2 Completed. Top Ten Users by Transaction Volume Calculated.')
     return result
 
@@ -123,9 +111,10 @@ def aggregate_daily_transactions():
     """
     # NOTE: LEFT JOIN IS USED TO INCLUDE ALL USERS EVEN IF THEY HAVE NO TRANSACTIONS
 
-    result = execute_custom_query(query)
-    print(f'\nDaily Aggregates Per Transaction Type')
-    print(result)
+    result = utility_library.execute_custom_query(query)
+    if settings.DISPLAY_ETL_PROCESSES_TO_CONSOLE:
+        print(f'\nDaily Aggregates Per Transaction Type')
+        print(result)
     logs.log_event(f'Task 2-2-3 Completed. Daily Aggregates by Transaction Type Calculated.')
     return result
 
