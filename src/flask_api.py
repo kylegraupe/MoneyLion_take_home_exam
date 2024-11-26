@@ -18,7 +18,6 @@ Task 4a: Monitoring
 """
 
 from flask import Flask, jsonify, request
-import sqlite3
 import psutil
 
 import logs

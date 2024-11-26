@@ -104,10 +104,13 @@ def clean_users_data(df):
         logs.log_warning(f'There are {len(missing_user_id)} instances of missing User IDs. These rows have been dropped')
     df = df[df['user_id'].notna()]
 
-    invalid_user_id = df[df['user_id'].apply(lambda x: not isinstance(x, int) and x <= 0)]
+    df['user_id'] = df['user_id'].astype(int)
+
+    invalid_user_id = df[df['user_id'].apply(lambda x: not isinstance(x, int) or x <= 0)]
     if len(invalid_user_id) != 0:
         logs.log_warning(f'There are {len(invalid_user_id)} instances of invalid User IDs. These rows have been dropped.')
     df = df[df['user_id'].apply(lambda x: isinstance(x, int) and x > 0)]
+
 
     invalid_signup_date = df[df['signup_date'].apply(is_invalid_date)]
     if len(invalid_signup_date) != 0:

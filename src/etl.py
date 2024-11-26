@@ -48,7 +48,7 @@ def calculate_total_transaction_amount_per_user(log_events=True):
 
     result = utility_library.execute_custom_query(query)
     if settings.DISPLAY_ETL_PROCESSES_TO_CONSOLE:
-        print(f'\nTotal Transaction Amount Per User:')
+        print(f'Total Transaction Amount Per User:')
         print(result)
 
     if log_events:
