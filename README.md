@@ -8,7 +8,7 @@
 ![psutil](https://img.shields.io/badge/psutil-%23007ACC?style=for-the-badge&logo=python&logoColor=white)
 ![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
 
-
+---
 
 ## Features and Tasks
 
@@ -47,14 +47,15 @@ General:
 - settings.py: Contains global variables and paths to be used throughout the application.
 - utility_library.py: Contains reusable code such as query functionality to be used throughout the application.
 
-### Setup Instructions
+---
 
-### Prerequisites
+## Prerequisites
 - Python 3.8 or higher
 - Git (for cloning repository)
 - pip (package manager for installing dependencies)
+---
 
-### Installation and Setup Steps
+## Installation and Setup
 1. Clone Repository
    - Using Command Line: git clone https://github.com/kylegraupe/MoneyLion_take_home_exam.git
    - Or use GitHub GUI/Download as Zip
@@ -65,8 +66,9 @@ General:
 4. Install dependencies
    - A requirements.txt file is included in the repository.
    - Run: pip install -r requirements.txt to install dependencies. 
+---
 
-### Usage Instructions
+## Usage Instructions
 1. PyCharm or other Python IDE is recommended. 
 2. Ensure Python Interpreter is set up correctly.
 3. Navigate to settings.py. Ensure these variables are correct before executing.
@@ -79,11 +81,13 @@ General:
 7. Navigate to the 'logs' folder during or after execution to view the logs from the run.
 
 - If you have any questions with setup or installation, do not hesitate to reach out via email.
+---
 
-# Notes
+## Notes
 - Unit tests and monitoring were implemented into the solution as examples of possible testing and monitoring techniques. In real-world applications, we can test and monitor in much further depth. However, for the scope of this assignment the tests and monitoring endpoints should be more than sufficient.
+---
 
-# Future Tasks
+## Future Tasks
 - Containerization: In future iterations, it would be possible to containerize this application through the use of common methods like Docker Images. This would be done by:
   1. Creating a DockerFile and a .dockerignore file
   2. Building a docker image
