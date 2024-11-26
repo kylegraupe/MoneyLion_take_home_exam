@@ -1,6 +1,8 @@
 <h1 align="left">
   <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=40&duration=2000&pause=10000&color=0FFFD0&center=false&vCenter=true&width=1000&lines=MoneyLion+Take+Home+Exam" alt="Typing SVG" />
 </h1>
+
+
 ![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)
 ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
 ![psutil](https://img.shields.io/badge/psutil-%23007ACC?style=for-the-badge&logo=python&logoColor=white)
