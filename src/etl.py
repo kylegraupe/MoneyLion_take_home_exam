@@ -1,5 +1,5 @@
 """
-TASK 2:
+TASK 2: ETL
 1. Extract data from the database
 2. Transform the data:
     - Calculate the total transaction amount per user.
@@ -34,8 +34,9 @@ def execute_custom_query(query):
 
 def calculate_total_transaction_amount_per_user():
     """
-
-    :return:
+    This function calculates the total transaction amount as defined by the sum of all transactions from the associated
+    user and the total transaction amounts for deposits, withdrawals, and purchases for the associated user.
+    :return: Pandas DataFrame containing query results
     """
 
     query = """
@@ -61,13 +62,13 @@ def calculate_total_transaction_amount_per_user():
     result = execute_custom_query(query)
     print(f'\nTotal Transaction Amount Per User:')
     print(result)
-    print(result.info())
     return result
 
 def identify_top_ten_users_by_transaction_volume():
     """
-
-    :return:
+    This function calculates the top users by transaction volume. Transaction volume is defined as the number of
+    transactions for a given user.
+    :return: Pandas DataFrame containing results
     """
 
     query = """
@@ -95,8 +96,8 @@ def identify_top_ten_users_by_transaction_volume():
 
 def aggregate_daily_transactions():
     """
-
-    :return:
+    This function aggregates the total deposits, purchases, and withdrawals made on each day in the dataset.
+    :return: Pandas DataFrame containing result
     """
 
     query = """
@@ -167,10 +168,8 @@ def upsert_transaction_summary_to_users():
     This function updates the user table with the calculated transaction summary
     without overwriting existing user data (signup_date, country).
     """
-    # First, get the transaction summary data
     transaction_summary = calculate_total_transaction_amount_per_user()
 
-    # Open a connection to the database
     conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()
 
@@ -201,8 +200,12 @@ def upsert_transaction_summary_to_users():
     conn.close()
     print("User transaction summary successfully updated without affecting existing user data.")
 
-
 def etl_executive():
+    """
+    Executive function that runs all ETL tasks in the appropriate order.
+    :return:
+    """
+
     calculate_total_transaction_amount_per_user()
     identify_top_ten_users_by_transaction_volume()
     aggregate_daily_transactions()

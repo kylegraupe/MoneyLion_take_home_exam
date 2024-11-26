@@ -1,3 +1,14 @@
+"""
+Task 3: API Development
+Develop a RESTful API to expose the processed data.
+1. Get User Transaction Summary: get_user_transaction_summary()
+    - Copy into browser to test: http://127.0.0.1:5000/api/user_transaction_summary?user_id=101
+2. Get Top Users: get_top_users()
+    - Copy into browser to test: http://127.0.0.1:5000/api/top_users
+3. Get Daily Transactions: get_daily_transactions()
+    - Copy into browser to test: http://127.0.0.1:5000/api/daily_transactions
+"""
+
 from flask import Flask, jsonify, request
 import sqlite3
 
@@ -7,8 +18,13 @@ app = Flask(__name__)
 DATABASE_PATH = "transactions_data.db"
 
 
-# Utility function to query the database
 def query_db(query, params=()):
+    """
+    Function used to query SQLite Database
+    :param query:
+    :param params:
+    :return:
+    """
     conn = sqlite3.connect(DATABASE_PATH)
     conn.row_factory = sqlite3.Row  # To access columns by name
     cur = conn.cursor()
@@ -21,6 +37,10 @@ def query_db(query, params=()):
 # 1. Get User Transaction Summary
 @app.route('/api/user_transaction_summary', methods=['GET'])
 def get_user_transaction_summary():
+    """
+
+    :return:
+    """
     user_id = request.args.get('user_id')
 
     if not user_id:
@@ -57,6 +77,10 @@ def get_user_transaction_summary():
 # 2. Get Top Users by Transaction Volume (Number of Transactions)
 @app.route('/api/top_users', methods=['GET'])
 def get_top_users():
+    """
+
+    :return:
+    """
     query = """
     SELECT 
         u.user_id, 
@@ -85,6 +109,10 @@ def get_top_users():
 # 3. Get Daily Transaction Totals by Transaction Type
 @app.route('/api/daily_transactions', methods=['GET'])
 def get_daily_transactions():
+    """
+
+    :return:
+    """
     query = """
     SELECT 
         t.transaction_date, 
@@ -103,4 +131,5 @@ def get_daily_transactions():
         return jsonify({'error': 'No transactions found'}), 404
 
     return jsonify([dict(row) for row in result])
+
 

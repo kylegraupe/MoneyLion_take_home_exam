@@ -118,7 +118,6 @@ def execute_custom_query(query):
         conn.close()
         raise ValueError(f"An error occurred while executing the query: {e}")
 
-
 def delete_table(db_path, table_name):
     """
     Deletes a table from the SQLite database.
@@ -147,7 +146,6 @@ def delete_table(db_path, table_name):
 
     except sqlite3.Error as e:
         print(f"An error occurred while deleting the table: {e}")
-
 
 def data_import_executive():
     """
