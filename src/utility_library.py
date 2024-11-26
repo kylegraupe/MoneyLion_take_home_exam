@@ -1,3 +1,7 @@
+"""
+Utility library for reusable code.
+"""
+
 import sqlite3
 import pandas as pd
 

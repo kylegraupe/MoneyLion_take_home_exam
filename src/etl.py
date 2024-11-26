@@ -121,6 +121,7 @@ def aggregate_daily_transactions():
 def alter_users_table_for_transaction_summary():
     """
     Alter the users table to add the columns needed for transaction summary data if they don't already exist.
+    :return: None
     """
     conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()
@@ -129,45 +130,47 @@ def alter_users_table_for_transaction_summary():
     cursor.execute("PRAGMA table_info(users);")
     existing_columns = [column[1] for column in cursor.fetchall()]
 
+    print(f'Altering User Table for Transaction Summary...')
     # Add the columns only if they do not already exist
     if 'total_transaction_amount' not in existing_columns:
         cursor.execute("""
             ALTER TABLE users
             ADD COLUMN total_transaction_amount REAL DEFAULT 0;
         """)
-        print("Added column total_transaction_amount.")
+        print("\tAdded column total_transaction_amount.")
 
     if 'total_deposit' not in existing_columns:
         cursor.execute("""
             ALTER TABLE users
             ADD COLUMN total_deposit REAL DEFAULT 0;
         """)
-        print("Added column total_deposit.")
+        print("\tAdded column total_deposit.")
 
     if 'total_withdrawal' not in existing_columns:
         cursor.execute("""
             ALTER TABLE users
             ADD COLUMN total_withdrawal REAL DEFAULT 0;
         """)
-        print("Added column total_withdrawal.")
+        print("\tAdded column total_withdrawal.")
 
     if 'total_purchase' not in existing_columns:
         cursor.execute("""
             ALTER TABLE users
             ADD COLUMN total_purchase REAL DEFAULT 0;
         """)
-        print("Added column total_purchase.")
+        print("\tAdded column total_purchase.")
 
     conn.commit()
     conn.close()
     print("Users table updated successfully with transaction summary columns.")
     logs.log_event(f'Task 2-3 Completed. Users table updated successfully with transaction summary columns.')
 
-
 def upsert_transaction_summary_to_users():
     """
     This function updates the user table with the calculated transaction summary
-    without overwriting existing user data (signup_date, country).
+    without overwriting existing user data (signup_date, country) and inserts it into the database.
+
+    Upsert = Update & Insert
     """
     transaction_summary = calculate_total_transaction_amount_per_user(log_events=False)
 
@@ -202,8 +205,6 @@ def upsert_transaction_summary_to_users():
     print("User transaction summary successfully updated without affecting existing user data.")
     logs.log_event(f'Task 2-3 Completed. User transaction summary successfully updated without affecting existing user data.')
 
-
-
 def etl_executive():
     """
     Executive function that runs all ETL tasks in the appropriate order.
@@ -216,3 +217,5 @@ def etl_executive():
     alter_users_table_for_transaction_summary()
     upsert_transaction_summary_to_users()
     logs.log_event(f'Task 2 Completed. All ETL Processes Completed.')
+    print(f'Task 2 Completed. All ETL Processes Completed.')
+    print(f'-' * 30)

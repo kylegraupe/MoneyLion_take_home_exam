@@ -168,7 +168,7 @@ def delete_table(db_path, table_name):
 def data_import_executive():
     """
     This function executes the steps to create the database schema and import the raw data from the CSV files.
-    :return:
+    :return: None
     """
 
     if settings.DELETE_USER_TABLE:
@@ -181,3 +181,6 @@ def data_import_executive():
     load_transactions_to_db(DATABASE_PATH, TRANSACTIONS_PATH)
 
     logs.log_event('Task 1 Completed Successfully. All data has been imported into SQLite Database.')
+
+    print(f'Task 1 Completed. All data has been imported into SQLite Database.')
+    print(f'-' * 30)

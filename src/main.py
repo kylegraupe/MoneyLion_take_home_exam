@@ -1,9 +1,6 @@
 """
-Execution endpoint.
+Application execution endpoint. Configure interpreter to this file.
 """
-
-import sqlite3
-import pandas as pd
 
 import import_raw_to_db
 import etl

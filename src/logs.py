@@ -1,3 +1,11 @@
+"""
+Task 4b: Logging
+- Key events are logged using the logging library.
+- Errors are logged in try-except wrappings.
+
+New log files are created for each run describing the application status for each run.
+"""
+
 import logging
 import os
 from datetime import datetime

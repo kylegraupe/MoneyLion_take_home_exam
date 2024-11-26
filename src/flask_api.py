@@ -35,8 +35,12 @@ DATABASE_PATH = settings.DB_PATH
 @app.route('/api/user_transaction_summary', methods=['GET'])
 def get_user_transaction_summary():
     """
+    Handles the `/api/user_transaction_summary` endpoint to retrieve a user's transaction summary.
 
-    :return:
+    Request Parameters:
+    - `user_id` (str): The ID of the user whose transaction summary is to be retrieved.
+      This parameter must be provided as a query string (e.g., `/api/user_transaction_summary?user_id=101`).
+    :return: JSON response containing the user's transaction summary or an error message.
     """
     user_id = request.args.get('user_id')
 
@@ -73,13 +77,13 @@ def get_user_transaction_summary():
     logs.log_event(f'User {user_id} Transaction Summary call completed successfully and delivered to Flask Server.')
     return jsonify([dict(row) for row in result])
 
-
 # 2. Get Top Users by Transaction Volume (Number of Transactions)
 @app.route('/api/top_users', methods=['GET'])
 def get_top_users():
     """
+    Handles the `/api/top_users` endpoint to retrieve the top 10 users based on transaction volume.
 
-    :return:
+    :return: JSON response containing the top 10 users by transaction volume or an error message.
     """
     query = """
     SELECT 
@@ -111,8 +115,9 @@ def get_top_users():
 @app.route('/api/daily_transactions', methods=['GET'])
 def get_daily_transactions():
     """
+    Handles the `/api/daily_transactions` endpoint to retrieve the daily transaction information.
 
-    :return:
+    :return: JSON response containing the daily transaction data or an error message.
     """
     query = """
     SELECT 
@@ -139,7 +144,7 @@ def get_daily_transactions():
 def health_check():
     """
     Health check endpoint to monitor application health.
-    Returns system performance metrics like CPU, memory, and uptime.
+    :return: JSON containing system performance metrics like CPU, memory, and uptime.
     """
     health_status = {
         "cpu_usage_%": psutil.cpu_percent(interval=1),
@@ -156,7 +161,7 @@ def health_check():
 def log_monitoring():
     """
     Log Monitoring endpoint to monitor application status via logs.
-    Returns the number of INFO, WARNING, ERROR, and CRITICAL logs in the current log file.
+    :return: JSON containing the number of INFO, WARNING, ERROR, and CRITICAL logs in the current log file.
     """
     counts = monitoring.count_log_levels(f'logs/{logs.LOG_FILE}')
 
@@ -166,6 +171,9 @@ def log_monitoring():
         "error_count": counts['ERROR'],
         "critical_count":counts['CRITICAL']
     }
+
+    if not counts:
+        logs.log_error(f'Log Monitoring Unsuccessful. Check log file exists.')
 
     logs.log_event(f'Log Monitoring Successful and Delivered to Flask Server.')
     return jsonify(log_status), 200
