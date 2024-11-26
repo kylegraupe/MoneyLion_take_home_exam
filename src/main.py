@@ -4,13 +4,14 @@ Execution endpoint.
 
 import sqlite3
 import pandas as pd
+import time
 
 import import_raw_to_db
 import etl
 import flask_api
+import settings
 
-
-DATABASE_PATH = "transactions_data.db"
+DATABASE_PATH = settings.DB_PATH
 
 
 def execute_custom_query(query):
@@ -32,7 +33,6 @@ def execute_custom_query(query):
 
 
 if __name__ == "__main__":
-
     import_raw_to_db.data_import_executive()
     etl.etl_executive()
     flask_api.app.run(debug=True, use_reloader=False)

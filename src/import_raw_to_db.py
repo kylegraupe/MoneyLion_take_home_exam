@@ -13,10 +13,11 @@ import sqlite3
 import pandas as pd
 
 import logs
+import settings
 
-DATABASE_PATH = "transactions_data.db"
-USERS_PATH = "raw_data/users.csv"
-TRANSACTIONS_PATH = "raw_data/transactions.csv"
+DATABASE_PATH = settings.DB_PATH
+USERS_PATH = settings.USER_CSV_PATH
+TRANSACTIONS_PATH = settings.TRANSACTIONS_CSV_PATH
 
 
 def create_db_schemas(db_path):

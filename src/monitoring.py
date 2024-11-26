@@ -1,34 +1,18 @@
-from flask import Flask, jsonify
-import psutil
-import time
 
-app = Flask(__name__)
 
-@app.route("/health", methods=["GET"])
-def health_check():
-    """
-    Health check endpoint to monitor application health.
-    Returns system performance metrics like CPU, memory, and uptime.
-    """
-    health_status = {
-        "status": "healthy",
-        "uptime": get_uptime(),
-        "cpu_usage": psutil.cpu_percent(interval=1),
-        "memory_usage": psutil.virtual_memory().percent,
-        "disk_usage": psutil.disk_usage('/').percent,
-    }
-    return jsonify(health_status), 200
+def count_log_levels(log_file_path):
+    """Counts the number of INFO, WARNING, and ERROR logs in a log file."""
+    counts = {"INFO": 0, "WARNING": 0, "ERROR": 0, "CRITICAL": 0}
 
-def get_uptime():
-    """Calculate system uptime."""
-    boot_time = psutil.boot_time()
-    current_time = time.time()
-    uptime_seconds = current_time - boot_time
-    return convert_seconds_to_human_readable(uptime_seconds)
+    with open(log_file_path, "r") as log_file:
+        for line in log_file:
+            if "INFO" in line:
+                counts["INFO"] += 1
+            elif "WARNING" in line:
+                counts["WARNING"] += 1
+            elif "ERROR" in line:
+                counts["ERROR"] += 1
+            elif "CRITICAL" in line:
+                counts["CRITICAL"] +=1
 
-def convert_seconds_to_human_readable(seconds):
-    """Convert seconds to a human-readable format."""
-    days, remainder = divmod(seconds, 86400)
-    hours, remainder = divmod(remainder, 3600)
-    minutes, seconds = divmod(remainder, 60)
-    return f"{int(days)}d {int(hours)}h {int(minutes)}m {int(seconds)}s"
+    return counts

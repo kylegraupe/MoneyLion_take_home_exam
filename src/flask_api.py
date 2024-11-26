@@ -7,17 +7,25 @@ Develop a RESTful API to expose the processed data.
     - Copy into browser to test: http://127.0.0.1:5000/api/top_users
 3. Get Daily Transactions: get_daily_transactions()
     - Copy into browser to test: http://127.0.0.1:5000/api/daily_transactions
+
+Task 4a: Monitoring
+1. Monitor application performance and health
+    - Copy into browser to test: http://127.0.0.1:5000/api/health
+    - Copy into browser to test: http://127.0.0.1:5000/api/log_monitor
 """
 
 from flask import Flask, jsonify, request
 import sqlite3
+import psutil
 
 import logs
+import monitoring
+import settings
 
 app = Flask(__name__)
 
 # Database path
-DATABASE_PATH = "transactions_data.db"
+DATABASE_PATH = settings.DB_PATH
 
 
 def query_db(query, params=()):
@@ -141,4 +149,38 @@ def get_daily_transactions():
     logs.log_event(f'Daily Transactions Found and Delivered to Flask Server.')
     return jsonify([dict(row) for row in result])
 
+@app.route("/api/health", methods=["GET"])
+def health_check():
+    """
+    Health check endpoint to monitor application health.
+    Returns system performance metrics like CPU, memory, and uptime.
+    """
+    health_status = {
+        "status": "healthy",
+        "cpu_usage_%": psutil.cpu_percent(interval=1),
+        "num_cores": psutil.cpu_count(),
+        "memory_usage_%": psutil.virtual_memory().percent,
+        "disk_usage_%": psutil.disk_usage('/').percent,
+        "user_info":psutil.users()
+    }
 
+    logs.log_event(f'Health Check Successful and Delivered to Flask Server.')
+    return jsonify(health_status), 200
+
+@app.route("/api/log_monitor", methods=["GET"])
+def log_monitoring():
+    """
+    Log Monitoring check endpoint to monitor application status.
+    Returns the number of INFO, WARNING, and ERROR logs in the current log file.
+    """
+    counts = monitoring.count_log_levels(f'logs/{logs.LOG_FILE}')
+
+    log_status = {
+        "info_count": counts['INFO'],
+        "warning_count": counts['WARNING'],
+        "error_count": counts['ERROR'],
+        "critical_count":counts['CRITICAL']
+    }
+
+    logs.log_event(f'Log Monitoring Successful and Delivered to Flask Server.')
+    return jsonify(log_status), 200

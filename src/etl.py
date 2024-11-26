@@ -12,8 +12,9 @@ import sqlite3
 import pandas as pd
 
 import logs
+import settings
 
-DATABASE_PATH = "transactions_data.db"
+DATABASE_PATH = settings.DB_PATH
 pd.set_option('display.max_columns', None)
 
 
@@ -64,8 +65,11 @@ def calculate_total_transaction_amount_per_user(log_events=True):
     result = execute_custom_query(query)
     print(f'\nTotal Transaction Amount Per User:')
     print(result)
-    if log_events: # Since this function is used multiple times, we do not want redundant logging when called in the API.
+    if log_events:
         logs.log_event(f'Task 2-2-1 Completed. Total Transaction Amount Per User Calculated.')
+        # Since this function is used multiple times, we do not want redundant logging when called in the application.
+        # Ordinarily, I would make sure that this function is only called once, but to demonstrate the completion of the
+        # required tasks, I separated out the functionality.
     return result
 
 def identify_top_ten_users_by_transaction_volume():
@@ -214,7 +218,7 @@ def upsert_transaction_summary_to_users():
 def etl_executive():
     """
     Executive function that runs all ETL tasks in the appropriate order.
-    :return:
+    :return: None
     """
 
     calculate_total_transaction_amount_per_user()
@@ -223,7 +227,3 @@ def etl_executive():
     alter_users_table_for_transaction_summary()
     upsert_transaction_summary_to_users()
     logs.log_event(f'Task 2 Completed. All ETL Processes Completed.')
-
-
-
-
