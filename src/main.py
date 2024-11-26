@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
     import_raw_to_db.data_import_executive()
     etl.etl_executive()
-    flask_api.app.run(debug=True)
+    flask_api.app.run(debug=True, use_reloader=False)
 
     # query = "select * from users"
     # print(execute_custom_query(query))

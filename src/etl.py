@@ -2,14 +2,16 @@
 TASK 2: ETL
 1. Extract data from the database
 2. Transform the data:
-    - Calculate the total transaction amount per user.
-    - Identify the top 10 users by transaction volume.
-    - Aggregate daily transaction totals across all users.
+    1. Calculate the total transaction amount per user.
+    2. Identify the top 10 users by transaction volume.
+    3. Aggregate daily transaction totals across all users.
 3. Loads the processed data back into the database or prepares it for use by the API.
 """
 
 import sqlite3
 import pandas as pd
+
+import logs
 
 DATABASE_PATH = "transactions_data.db"
 pd.set_option('display.max_columns', None)
@@ -32,7 +34,7 @@ def execute_custom_query(query):
         conn.close()
         raise ValueError(f"An error occurred while executing the query: {e}")
 
-def calculate_total_transaction_amount_per_user():
+def calculate_total_transaction_amount_per_user(log_events=True):
     """
     This function calculates the total transaction amount as defined by the sum of all transactions from the associated
     user and the total transaction amounts for deposits, withdrawals, and purchases for the associated user.
@@ -62,6 +64,8 @@ def calculate_total_transaction_amount_per_user():
     result = execute_custom_query(query)
     print(f'\nTotal Transaction Amount Per User:')
     print(result)
+    if log_events: # Since this function is used multiple times, we do not want redundant logging when called in the API.
+        logs.log_event(f'Task 2-2-1 Completed. Total Transaction Amount Per User Calculated.')
     return result
 
 def identify_top_ten_users_by_transaction_volume():
@@ -92,6 +96,7 @@ def identify_top_ten_users_by_transaction_volume():
     result = execute_custom_query(query)
     print(f'\nTop Ten Users by Transaction Volume: ')
     print(result)
+    logs.log_event(f'Task 2-2-2 Completed. Top Ten Users by Transaction Volume Calculated.')
     return result
 
 def aggregate_daily_transactions():
@@ -117,6 +122,7 @@ def aggregate_daily_transactions():
     result = execute_custom_query(query)
     print(f'\nDaily Aggregates Per Transaction Type')
     print(result)
+    logs.log_event(f'Task 2-2-3 Completed. Daily Aggregates by Transaction Type Calculated.')
     return result
 
 def alter_users_table_for_transaction_summary():
@@ -162,13 +168,15 @@ def alter_users_table_for_transaction_summary():
     conn.commit()
     conn.close()
     print("Users table updated successfully with transaction summary columns.")
+    logs.log_event(f'Task 2-3 Completed. Users table updated successfully with transaction summary columns.')
+
 
 def upsert_transaction_summary_to_users():
     """
     This function updates the user table with the calculated transaction summary
     without overwriting existing user data (signup_date, country).
     """
-    transaction_summary = calculate_total_transaction_amount_per_user()
+    transaction_summary = calculate_total_transaction_amount_per_user(log_events=False)
 
     conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()
@@ -199,6 +207,9 @@ def upsert_transaction_summary_to_users():
     conn.commit()
     conn.close()
     print("User transaction summary successfully updated without affecting existing user data.")
+    logs.log_event(f'Task 2-3 Completed. User transaction summary successfully updated without affecting existing user data.')
+
+
 
 def etl_executive():
     """
@@ -211,5 +222,8 @@ def etl_executive():
     aggregate_daily_transactions()
     alter_users_table_for_transaction_summary()
     upsert_transaction_summary_to_users()
+    logs.log_event(f'Task 2 Completed. All ETL Processes Completed.')
+
+
 
 

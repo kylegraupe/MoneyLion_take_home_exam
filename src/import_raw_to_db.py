@@ -8,6 +8,8 @@ like SQLite).
 import sqlite3
 import pandas as pd
 
+import logs
+
 DATABASE_PATH = "transactions_data.db"
 USERS_PATH = "raw_data/users.csv"
 TRANSACTIONS_PATH = "raw_data/transactions.csv"
@@ -20,33 +22,44 @@ def create_db_schemas(db_path):
     :return:
     """
 
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
+    if not db_path:
+        logs.log_error('Database path not found.')
 
-    # Create users table
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS users (
-            user_id INTEGER PRIMARY KEY,
-            signup_date TEXT,
-            country TEXT
-        );
-    ''')
+    try:
+        conn = sqlite3.connect(db_path)
 
-    # Create transactions table
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS transactions (
-            transaction_id INTEGER PRIMARY KEY,
-            user_id INTEGER,
-            transaction_date TEXT,
-            amount REAL,
-            transaction_type TEXT,
-            FOREIGN KEY (user_id) REFERENCES users (user_id)
-        );
-    ''')
+        cursor = conn.cursor()
 
-    conn.commit()
-    conn.close()
-    print("Database schema created successfully.")  #TODO: CHANGE TO LOGGING
+        # Create users table
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS users (
+                user_id INTEGER PRIMARY KEY,
+                signup_date TEXT,
+                country TEXT
+            );
+        ''')
+        logs.log_event(f'Task 1-1a Completed. User Table Created Successfully.')
+
+        # Create transactions table
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS transactions (
+                transaction_id INTEGER PRIMARY KEY,
+                user_id INTEGER,
+                transaction_date TEXT,
+                amount REAL,
+                transaction_type TEXT,
+                FOREIGN KEY (user_id) REFERENCES users (user_id)
+            );
+        ''')
+        logs.log_event(f'Task 1-1b Completed. Transactions Table Created Successfully.')
+
+        conn.commit()
+        conn.close()
+        print("Task 1-1 Completed. Database schema created successfully.")
+        logs.log_event("Task 1-1 Completed. Database schema created successfully.")
+    except Exception as e:
+        logs.log_error(f'Error Connecting to SQLite Database. Error code: {e}')
+
 
 def load_users_to_db(db_path, csv_path):
     """
@@ -57,20 +70,31 @@ def load_users_to_db(db_path, csv_path):
     :param csv_path:
     :return:
     """
-    data = pd.read_csv(csv_path)
-    conn = sqlite3.connect(db_path)
 
-    for _, row in data.iterrows():
-        # Insert or ignore duplicates in the users table
-        query = '''
-            INSERT OR IGNORE INTO users (user_id, signup_date, country)
-            VALUES (?, ?, ?);
-        '''
-        conn.execute(query, (row['user_id'], row['signup_date'], row['country']))
+    if not db_path:
+        logs.log_error(f'Database path not found.')
 
-    conn.commit()
-    conn.close()
-    print("Users data ingested successfully.")  # TODO: CHANGE TO LOGGING
+    if not csv_path:
+        logs.log_error(f'User CSV path not found.')
+
+    try:
+        data = pd.read_csv(csv_path)
+        conn = sqlite3.connect(db_path)
+
+        for _, row in data.iterrows():
+            # Insert or ignore duplicates in the users table
+            query = '''
+                INSERT OR IGNORE INTO users (user_id, signup_date, country)
+                VALUES (?, ?, ?);
+            '''
+            conn.execute(query, (row['user_id'], row['signup_date'], row['country']))
+
+        conn.commit()
+        conn.close()
+        print("Task 1-2a Completed. Users data ingested successfully.")
+        logs.log_event("Task 1-2a Completed. Users data ingested successfully.")
+    except Exception as e:
+        logs.log_error(f'User data could not be ingested into SQLite Database. Error: {e}')
 
 def load_transactions_to_db(db_path, csv_path):
     """
@@ -81,25 +105,34 @@ def load_transactions_to_db(db_path, csv_path):
     :param csv_path:
     :return:
     """
-    data = pd.read_csv(csv_path)
-    conn = sqlite3.connect(db_path)
+    if not db_path:
+        logs.log_error(f'Database path not found.')
+    if not csv_path:
+        logs.log_error(f'Transactions CSV path not found.')
 
-    for _, row in data.iterrows():
-        # Insert or replace to handle duplicate transaction_id
-        query = '''
-            INSERT OR REPLACE INTO transactions (
-                transaction_id, user_id, transaction_date, amount, transaction_type
-            )
-            VALUES (?, ?, ?, ?, ?);
-        '''
-        conn.execute(query, (
-            row['transaction_id'], row['user_id'], row['transaction_date'],
-            row['amount'], row['transaction_type']
-        ))
+    try:
+        data = pd.read_csv(csv_path)
+        conn = sqlite3.connect(db_path)
 
-    conn.commit()
-    conn.close()
-    print("Transactions data ingested successfully.")  # TODO: CHANGE TO LOGGING
+        for _, row in data.iterrows():
+            # Insert or replace to handle duplicate transaction_id
+            query = '''
+                INSERT OR REPLACE INTO transactions (
+                    transaction_id, user_id, transaction_date, amount, transaction_type
+                )
+                VALUES (?, ?, ?, ?, ?);
+            '''
+            conn.execute(query, (
+                row['transaction_id'], row['user_id'], row['transaction_date'],
+                row['amount'], row['transaction_type']
+            ))
+
+        conn.commit()
+        conn.close()
+        print("Task 1-2b Completed. Transactions data ingested successfully.")
+        logs.log_event("Task 1-2b Completed. Transactions data ingested successfully.")
+    except Exception as e:
+        logs.log_error(f'Transaction data could not be ingested into SQLite Database. Error: {e}')
 
 def execute_custom_query(query):
     """
@@ -143,24 +176,23 @@ def delete_table(db_path, table_name):
         conn.close()
 
         print(f"Table '{table_name}' has been deleted successfully.")
+        logs.log_event(f"Table '{table_name}' has been deleted successfully.")
+
 
     except sqlite3.Error as e:
         print(f"An error occurred while deleting the table: {e}")
+        logs.log_error(f"Error occurred while deleting {table_name} table.")
 
 def data_import_executive():
     """
 
     :return:
     """
+    # delete_table(DATABASE_PATH, "users")
+    # delete_table(DATABASE_PATH, "transactions")
 
     create_db_schemas(DATABASE_PATH)
     load_users_to_db(DATABASE_PATH, USERS_PATH)
     load_transactions_to_db(DATABASE_PATH, TRANSACTIONS_PATH)
 
-    # delete_table(DATABASE_PATH, "users")
-
-    user_test_query = "SELECT * from users"
-    # transaction_test_query = "SELECT * FROM transactions WHERE transaction_type = 'deposit';"
-
-    print(execute_custom_query(user_test_query))
-    # print(execute_custom_query(transaction_test_query))
+    logs.log_event('Task 1 Completed Successfully. All data has been imported into SQLite Database.')

@@ -12,6 +12,8 @@ Develop a RESTful API to expose the processed data.
 from flask import Flask, jsonify, request
 import sqlite3
 
+import logs
+
 app = Flask(__name__)
 
 # Database path
@@ -44,6 +46,7 @@ def get_user_transaction_summary():
     user_id = request.args.get('user_id')
 
     if not user_id:
+        logs.log_error(f'Bad API Call: User ID is Required. Error Status: 400')
         return jsonify({'error': 'user_id is required'}), 400
 
     query = """
@@ -68,9 +71,11 @@ def get_user_transaction_summary():
     result = query_db(query, (user_id,))
 
     if not result:
+        logs.log_error(f'Bad API Call: User ID is not found. Error Status: 404')
         return jsonify({'error': 'User not found'}), 404
 
     # Return the result in a JSON response
+    logs.log_event(f'User {user_id} Transaction Summary call completed successfully and delivered to Flask Server.')
     return jsonify([dict(row) for row in result])
 
 
@@ -101,8 +106,10 @@ def get_top_users():
     result = query_db(query)
 
     if not result:
+        logs.log_error(f'Bad API Call: Top Users by Transaction Volume Not Found. Status error: 404')
         return jsonify({'error': 'No users found'}), 404
 
+    logs.log_event(f'Top Users by Transaction Volume Found and Delivered to Flask Server.')
     return jsonify([dict(row) for row in result])
 
 
@@ -128,8 +135,10 @@ def get_daily_transactions():
     result = query_db(query)
 
     if not result:
+        logs.log_error(f'Bad API Call: Daily Transactions Not Found. Status error: 404')
         return jsonify({'error': 'No transactions found'}), 404
 
+    logs.log_event(f'Daily Transactions Found and Delivered to Flask Server.')
     return jsonify([dict(row) for row in result])
 
 
