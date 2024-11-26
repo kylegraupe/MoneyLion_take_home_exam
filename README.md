@@ -1,7 +1,7 @@
 # MoneyLion_take_home_exam
 Machine Learning Platform Engineer Take Home Exam
 
-## Features
+## Features and Tasks
 
 - Task 1: Data Ingestion and Database Design
   - Script: import_raw_to_db.py
@@ -36,7 +36,7 @@ Machine Learning Platform Engineer Take Home Exam
 General:
 - main.py: Execution endpoint. Configure Python Interpreter to this file.
 - settings.py: Contains global variables and paths to be used throughout the application.
-- utility_library: Contains reusable code such as query functionality to be used throughout the application.
+- utility_library.py: Contains reusable code such as query functionality to be used throughout the application.
 
 ### Setup Instructions
 
