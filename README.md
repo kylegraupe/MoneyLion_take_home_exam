@@ -1,5 +1,7 @@
-# MoneyLion Take Home Exam
-Machine Learning Platform Engineer Take Home Exam using:
+<!-- Interactive Typing Name Animation (GIF or external service like Lottie can be used) -->
+<h1 align="left">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=50&duration=2000&pause=10000&color=0FFFD0&center=false&vCenter=true&width=1000&lines=MoneyLion Take Home Exam" alt="Typing SVG" />
+</h1>Machine Learning Platform Engineer Take Home Exam using:
 
 ![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)
 ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
