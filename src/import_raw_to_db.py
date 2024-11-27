@@ -84,13 +84,6 @@ def clean_users_data(df):
     :param df: Input pandas DataFrame.
     :return: Cleaned pandas DataFrame and a dictionary with the count of poor data instances.
     """
-    # Validate and filter out rows with invalid `signup_date`
-    def is_invalid_date(date_str):
-        try:
-            datetime.strptime(date_str, "%Y-%m-%d")
-            return False
-        except (ValueError, TypeError):
-            return True
 
     def is_valid_date(date_str):
         try:
@@ -112,7 +105,7 @@ def clean_users_data(df):
     df = df[df['user_id'].apply(lambda x: isinstance(x, int) and x > 0)]
 
 
-    invalid_signup_date = df[df['signup_date'].apply(is_invalid_date)]
+    invalid_signup_date = df[~df['signup_date'].apply(is_valid_date)]
     if len(invalid_signup_date) != 0:
         logs.log_warning(f'There are {invalid_signup_date.sum()} instances of invalid signup dates. These rows have been dropped.')
     df = df[df['signup_date'].apply(is_valid_date)]
