@@ -19,7 +19,7 @@
     - User IDs and Transaction IDs are unique.
 ### - Task 2: ETL Pipeline
   - Script: etl.py
-  - Overview: Extracts raw data from database, transforms data using instructions, loads the data back into SQLite Database for use by Flask API.
+  - Overview: Extracts raw data from database, transforms data using logic from instructions, loads the data back into SQLite Database for use by Flask API.
   - Assumptions:
     - Total transaction amount per user is equal to the sum of all transactions for that user. Deposits, withdrawals, and purchases are all positive values. This instruction was ambiguous as this could mean many things.
     - Transaction volume is calculated by the number of transactions for a given user.
