@@ -30,7 +30,6 @@ app = Flask(__name__)
 DATABASE_PATH = settings.DB_PATH
 
 
-# 1. Get User Transaction Summary
 @app.route('/api/user_transaction_summary', methods=['GET'])
 def get_user_transaction_summary():
     """
@@ -72,11 +71,9 @@ def get_user_transaction_summary():
         logs.log_error(f'Bad API Call: User ID is not found. Error Status: 404')
         return jsonify({'error': 'User not found'}), 404
 
-    # Return the result in a JSON response
     logs.log_event(f'User {user_id} Transaction Summary call completed successfully and delivered to Flask Server.')
     return jsonify([dict(row) for row in result])
 
-# 2. Get Top Users by Transaction Volume (Number of Transactions)
 @app.route('/api/top_users', methods=['GET'])
 def get_top_users():
     """
@@ -118,14 +115,12 @@ def get_daily_transactions():
 
     :return: JSON response containing the daily transaction data or an error message.
     """
-    # Extract the `date` query parameter from the request
     transaction_date = request.args.get('date')
 
     if not transaction_date:
         logs.log_error(f'Bad API Call: Missing date parameter. Status error: 400')
         return jsonify({'error': 'Missing required query parameter: date'}), 400
 
-    # SQL query to fetch daily transactions for the specified date
     query = """
     SELECT 
         t.transaction_date, 
