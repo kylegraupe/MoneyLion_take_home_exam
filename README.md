@@ -1,6 +1,8 @@
 <h1 align="left">
   <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=40&duration=2000&pause=10000&color=0FFFD0&center=false&vCenter=true&width=1000&lines=MoneyLion+Take+Home+Exam" alt="Typing SVG" />
 </h1>
+
+
 ![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)
 ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
 ![psutil](https://img.shields.io/badge/psutil-%23007ACC?style=for-the-badge&logo=python&logoColor=white)
@@ -17,7 +19,7 @@
     - User IDs and Transaction IDs are unique.
 ### - Task 2: ETL Pipeline
   - Script: etl.py
-  - Overview: Extracts raw data from database, transforms data using instructions, loads the data back into SQLite Database for use by Flask API.
+  - Overview: Extracts raw data from database, transforms data using logic from instructions, loads the data back into SQLite Database for use by Flask API.
   - Assumptions:
     - Total transaction amount per user is equal to the sum of all transactions for that user. Deposits, withdrawals, and purchases are all positive values. This instruction was ambiguous as this could mean many things.
     - Transaction volume is calculated by the number of transactions for a given user.
